@@ -15,8 +15,10 @@ router.get('/address', checkAuth, UserAddressCon.user_address);
 
 router.post('/address', checkAuth, UserAddressCon.user_create_address);
 
+router.get('/address/:addressId', checkAuth, UserAddressCon.user_get_address);
+
 router.patch('/address/:addressId', checkAuth, UserAddressCon.user_update_address);
 
-router.delete('/address/:addressId', checkAuth, UserAddressCon.user_update_address);
+router.delete('/address/:addressId', checkAuth, UserAddressCon.user_delete_address);
 
 module.exports = router;

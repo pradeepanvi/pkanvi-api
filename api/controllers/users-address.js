@@ -79,8 +79,32 @@ exports.user_create_address = (req, res, next) => {
         });
 }
 
+exports.user_get_address = (req, res, next) => {
+    const id = req.params.addressId;
+    UserAddress.findById(id)
+        .exec()
+        .then(doc => {
+            console.log("From Database", doc);
+            if(doc){
+                res.status(200).json({
+                    address: doc,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/user/address' + id
+                    }
+                });
+            } else {
+                res.status(404).json({message: "No valid entry found for provided ID"});
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: err});
+        })
+}
+
 exports.user_update_address = (req, res, next) => {
-    const id = req.params.productId;
+    const id = req.params.addressId;
     const updateOps = {};
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
@@ -106,7 +130,7 @@ exports.user_update_address = (req, res, next) => {
 }
 
 exports.user_delete_address = (req, res, next) => {
-    const id = req.params.productId;
+    const id = req.params.addressId;
     UserAddress.remove({ _id: id})
         .exec()
         .then(result => {
@@ -114,7 +138,7 @@ exports.user_delete_address = (req, res, next) => {
                 message: 'Product deleted',
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/products',
+                    url: 'http://localhost:3000/user/address' + id,
                     body: { name: 'String', price: 'Number' }
                 }
             });
