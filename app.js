@@ -1,6 +1,8 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const multer = require('multer');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -16,10 +18,23 @@ mongoose.connect('mongodb://shop-api:' + process.env.MONGO_ATLAS_PW + '@cluster0
 
 mongoose.Promise = global.Promise;
 
-app.use(morgan('dev'));
-app.use('/uploads', express.static('uploads'));
-app.use(bodyParser.urlencoded({extended: false}));
+const DIR = './uploads';
+ 
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, DIR);
+    },
+    filename: (req, file, cb) => {
+      cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+    }
+});
+let upload = multer({storage: storage});
+
+// app.use(morgan('dev'));
+// app.use('/uploads', express.static('uploads'));
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -33,6 +48,21 @@ app.use((req, res, next) => {
         return res.status(200).json({});
     }
     next();
+});
+
+app.post('/uploads', upload.single('productImage'), function (req, res) {
+    if (!req.file) {
+        console.log("No file received");
+        return res.send({
+          success: false
+        });
+    
+      } else {
+        console.log(res);
+        return res.send({
+          success: true
+        })
+      }
 });
 
 // Routes which should handle requests

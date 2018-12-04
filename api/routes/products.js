@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
         cb(null, './uploads/');
     },
     filename: function(req, file, cb){
-        cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+        cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
     }
 })
 
@@ -30,9 +30,11 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+
 router.get('/', ProductsController.products_get_all);
 
-router.post('/', upload.single('productImage'), ProductsController.products_create_product);
+//router.post('/', upload.single('productImage'), ProductsController.products_create_product);
+router.post('/', ProductsController.products_create_product);
 
 router.get('/:productId', ProductsController.products_get_product);
 
