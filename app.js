@@ -1,18 +1,13 @@
-const path = require('path');
 const express = require('express');
 const app = express();
-const morgan = require('morgan');
 const multer = require('multer');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/orders');
-const userRoutes = require('./api/routes/user');
-const detailRoutes = require('./api/routes/confirm-detail');
-const quatationRoutes = require('./api/routes/quatation');
+//const ProjectRoutes = require('./api/routes/project');
+const RollRoutes = require('./api/routes/roll');
 
-mongoose.connect('mongodb://shop-api:' + process.env.MONGO_ATLAS_PW + '@cluster0-shard-00-00-prx0w.mongodb.net:27017,cluster0-shard-00-01-prx0w.mongodb.net:27017,cluster0-shard-00-02-prx0w.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true', {
+mongoose.connect('mongodb+srv://pkanvi:' + process.env.MONGO_ATLAS_PW + '@pkanvi-api-bhhxl.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
 })
 
@@ -30,15 +25,11 @@ let storage = multer.diskStorage({
 });
 let upload = multer({storage: storage});
 
-// app.use(morgan('dev'));
-// app.use('/uploads', express.static('uploads'));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    //res.header('Access-Control-Allow-Headers', '*')
     res.header(
         'Access-Control-Allow-Headers', 
         'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -66,11 +57,8 @@ app.post('/uploads', upload.single('productImage'), function (req, res) {
 });
 
 // Routes which should handle requests
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
-app.use('/user', userRoutes);
-app.use('/confirm-detail', detailRoutes);
-app.use('/quatation', quatationRoutes)
+//app.use('/project', ProjectRoutes);
+app.use('/roll', RollRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');

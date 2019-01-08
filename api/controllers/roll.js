@@ -1,20 +1,20 @@
-const mongoose = require('mongoose');
-const ConfirmD = require('../models/confirm-detail');
+const Roll = require('../models/roll');
 
-exports.confirms_get_all = (req, res, next) => {
-    ConfirmD.find()
+exports.roll_get_all = (req, res, next) => {
+    Roll.find()
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                confirm_details : docs.map(doc => {
+                rolls: docs.map(doc => {
                     return {
+                        icon: doc.icon,
+                        head: doc.head,
+                        text: doc.text,
                         _id: doc._id,
-                        email: doc.email,
-                        phone: doc.phone,
                         request: {
                             type: 'GET',
-                            url: 'http://localhost:3000/confirm-detail/' + doc._id
+                            url: 'http://localhost:3000/rolls/' + doc._id
                         }
                     }
                 })
@@ -27,81 +27,63 @@ exports.confirms_get_all = (req, res, next) => {
             res.status(500).json({
                 error: err
             })
-        });
+        })
 }
 
-exports.confirms_create_detail = (req, res, next) => {
-    const confirmD = new ConfirmD({
-        _id: new mongoose.Types.ObjectId(),
-        email: req.body.email,
-        phone: req.body.phone,
+exports.roll_create = (req, res, next) => {
+    const roll = new Roll({
+        icon: req.body.icon,
+        head: req.body.head,
+        text: req.body.text
     })
-    confirmD
+
+    roll
         .save()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Confirm Detail successfully',
-                createdDetail: {
-                    email: req.body.email,
-                    phone: req.body.phone,
+                message: 'Created Roll Seccessfully',
+                createdRoll: {
+                    icon: result.icon,
+                    head: result.head,
+                    text: result.text,
                     _id: result._id,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/confirm-detail/' + result._id
+                        url: 'http://localhost:3000/rolls/' + result._id
                     }
                 }
-            });
+            })
         })
         .catch(err => {
             console.log(err);
             res.status(500).json({
                 error: err
             })
-        });
+        })
 }
 
-exports.confirms_get_detail = (req, res, next) => {
-    const id = req.params.detailId;
-    ConfirmD.findById(id)
-        .exec()
+exports.roll_get = (req, res, next) => {
+    const id = req.params.rollId;
+    Roll.findById(id)
         .then(doc => {
             console.log("From Database", doc);
             if(doc){
                 res.status(200).json({
-                    confirmD: doc,
+                    roll: doc,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/detailId/'
+                        url: 'http://localhost:3000/rolls'
                     }
-                });
+                })
             } else {
-                res.status(404).json({message: "No valid entry found for provided ID"});
+                res.status(404).json({
+                    message: "No Valid entry found of provided ID"
+                })
             }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
-        })
-}
-
-exports.confirms_update_detail = (req, res, next) => {
-    const id = req.params.detailId;
-    const updateOps = {};
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
-    ConfirmD.update({ _id: id}, {$set: updateOps})
-        .exec()
-        .then(result => {
-            console.log(result);
             res.status(200).json({
-                message: 'Product updated',
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:3000/confirm-detail/' + id
-                }
-            });
+                roll: doc
+            })
         })
         .catch(err => {
             console.log(err);
@@ -111,16 +93,45 @@ exports.confirms_update_detail = (req, res, next) => {
         })
 }
 
-exports.confirms_delete_detail = (req, res, next) => {
-    const id = req.params.detailId;
-    ConfirmD.remove({ _id: id})
+exports.roll_update = (req, res, next) => {
+    const id = req.params.rollId;
+    const updateOps = {};
+    for(const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
+    Roll.update(
+        {_id: id},
+        {$set: updateOps}
+    )
+        .exec()
+        .then(result => {
+            console.log(result);
+            res.status(200).json({
+                message: 'Roll updated',
+                request: {
+                    type: 'GET',
+                    url: 'http://localhost:3000/rolls' + id
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            })
+        })   
+}
+
+exports.roll_delete = (req, res, next) => {
+    const id = req.params.rollId;
+    Roll.remove({ _id: id})
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Detail deleted',
+                message: 'Roll deleted',
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/confirm-detail/',
+                    url: 'http://localhost:3000/rolls',
                     body: { name: 'String', price: 'Number' }
                 }
             });
