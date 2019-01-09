@@ -1,56 +1,53 @@
-const Roll = require('../models/roll');
+const Extra = require('../models/extra');
 
-exports.roll_get_all = (req, res, next) => {
-    Roll.find()
-        .exec()
-        .then(docs => {
-            const response = {
-                count: docs.length,
-                rolls: docs.map(doc => {
-                    return {
-                        icon: doc.icon,
-                        head: doc.head,
-                        text: doc.text,
-                        _id: doc._id,
-                        request: {
-                            type: 'GET',
-                            url: 'http://localhost:3000/roll/' + doc._id
-                        }
-                    }
-                })
-            }
-            console.log(response);
-            res.status(200).json(response);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            })
-        })
+exports.extra_get_all = (req, res, next) => {
+    Extra.find()
+         .exec()
+         .then(docs => {
+             const response = {
+                 count: docs.length,
+                 extras: docs.map(doc => {
+                     return {
+                         number: doc.number,
+                         text: doc.text,
+                         _id: doc._id,
+                         request: {
+                             type: 'GET',
+                             url: 'http://localhost:3000/extra/' + doc._id
+                         }
+                     }
+                 })
+             }
+             console.log(response);
+             res.status(200).json(response);
+         })
+         .catch(err => {
+             console.log(err);
+             res.status(500).json({
+                 error: err
+             })
+         })
 }
 
-exports.roll_create = (req, res, next) => {
-    const roll = new Roll({
-        icon: req.body.icon,
-        head: req.body.head,
+exports.extra_create = (req, res, next) => {
+    const extra = new Extra({
+        number: req.body.number,
         text: req.body.text
     })
 
-    roll
+    extra
         .save()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Created Roll Seccessfully',
-                createdRoll: {
-                    icon: result.icon,
-                    head: result.head,
+                message: 'Created Extra Seccessfully',
+                createdExtra: {
+                    number: result.number,
                     text: result.text,
                     _id: result._id,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll/' + result._id
+                        url: 'http://localhost:3000/extra/' + result._id
                     }
                 }
             })
@@ -63,17 +60,17 @@ exports.roll_create = (req, res, next) => {
         })
 }
 
-exports.roll_get = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.findById(id)
-        .then(doc => {
+exports.extra_get = (req, res, next) => {
+    const id = req.params.extraId;
+    Extra.findById(id)
+         .then(doc => {
             console.log("From Database", doc);
             if(doc){
                 res.status(200).json({
-                    roll: doc,
+                    extra: doc,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll'
+                        url: 'http://localhost:3000/extra'
                     }
                 })
             } else {
@@ -82,7 +79,7 @@ exports.roll_get = (req, res, next) => {
                 })
             }
             res.status(200).json({
-                roll: doc
+                extra: doc
             })
         })
         .catch(err => {
@@ -93,13 +90,13 @@ exports.roll_get = (req, res, next) => {
         })
 }
 
-exports.roll_update = (req, res, next) => {
-    const id = req.params.rollId;
+exports.extra_update = (req, res, next) => {
+    const id = req.params.extraId;
     const updateOps = {};
     for(const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Roll.update(
+    Extra.update(
         {_id: id},
         {$set: updateOps}
     )
@@ -107,10 +104,10 @@ exports.roll_update = (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Roll updated',
+                message: 'Extra updated',
                 request: {
                     type: 'GET',
-                    url: 'http://localhost:3000/roll' + id
+                    url: 'http://localhost:3000/extra/' + id
                 }
             });
         })
@@ -122,16 +119,16 @@ exports.roll_update = (req, res, next) => {
         })   
 }
 
-exports.roll_delete = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.remove({ _id: id})
+exports.extra_delete = (req, res, next) => {
+    const id = req.params.extraId;
+    Extra.remove({ _id: id})
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Roll deleted',
+                message: 'Extra deleted',
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/roll',
+                    url: 'http://localhost:3000/extra',
                     body: { name: 'String', price: 'Number' }
                 }
             });

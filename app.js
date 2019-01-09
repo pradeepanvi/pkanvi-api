@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 //const ProjectRoutes = require('./api/routes/project');
 const RollRoutes = require('./api/routes/roll');
+const ExtraRoutes = require('./api/routes/extra');
 
 mongoose.connect('mongodb+srv://pkanvi:' + process.env.MONGO_ATLAS_PW + '@pkanvi-api-bhhxl.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
@@ -59,6 +60,7 @@ app.post('/uploads', upload.single('productImage'), function (req, res) {
 // Routes which should handle requests
 //app.use('/project', ProjectRoutes);
 app.use('/roll', RollRoutes);
+app.use('/extra', ExtraRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
