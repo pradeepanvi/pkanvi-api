@@ -1,20 +1,19 @@
-const Roll = require('../models/roll');
+const Front = require('../models/front-end');
 
-exports.roll_get_all = (req, res, next) => {
-    Roll.find()
+exports.front_get_all = (req, res, next) => {
+    Front.find()
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                rolls: docs.map(doc => {
+                fronts: docs.map(doc => {
                     return {
                         icon: doc.icon,
-                        head: doc.head,
                         text: doc.text,
                         _id: doc._id,
                         request: {
                             type: 'GET',
-                            url: 'http://localhost:3000/roll/' + doc._id
+                            url: 'http://localhost:3000/front-end/' + doc._id
                         }
                     }
                 })
@@ -30,27 +29,25 @@ exports.roll_get_all = (req, res, next) => {
         })
 }
 
-exports.roll_create = (req, res, next) => {
-    const roll = new Roll({
+exports.front_create = (req, res, next) => {
+    const front = new Front({
         icon: req.body.icon,
-        head: req.body.head,
         text: req.body.text
     })
 
-    roll
+    front
         .save()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Created Roll Seccessfully',
-                createdRoll: {
+                message: 'Created Front Seccessfully',
+                createdFront: {
                     icon: result.icon,
-                    head: result.head,
                     text: result.text,
                     _id: result._id,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll/' + result._id
+                        url: 'http://localhost:3000/front-end/' + result._id
                     }
                 }
             })
@@ -63,17 +60,17 @@ exports.roll_create = (req, res, next) => {
         })
 }
 
-exports.roll_get = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.findById(id)
+exports.front_get = (req, res, next) => {
+    const id = req.params.frontId;
+    Front.findById(id)
         .then(doc => {
             console.log("From Database", doc);
             if(doc){
                 res.status(200).json({
-                    roll: doc,
+                    front: doc,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll'
+                        url: 'http://localhost:3000/front-end'
                     }
                 })
             } else {
@@ -82,7 +79,7 @@ exports.roll_get = (req, res, next) => {
                 })
             }
             res.status(200).json({
-                roll: doc
+                front: doc
             })
         })
         .catch(err => {
@@ -93,13 +90,13 @@ exports.roll_get = (req, res, next) => {
         })
 }
 
-exports.roll_update = (req, res, next) => {
-    const id = req.params.rollId;
+exports.front_update = (req, res, next) => {
+    const id = req.params.frontId;
     const updateOps = {};
     for(const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Roll.update(
+    Front.update(
         {_id: id},
         {$set: updateOps}
     )
@@ -107,10 +104,10 @@ exports.roll_update = (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Roll updated',
+                message: 'Front updated',
                 request: {
                     type: 'GET',
-                    url: 'http://localhost:3000/roll' + id
+                    url: 'http://localhost:3000/front-end' + id
                 }
             });
         })
@@ -122,17 +119,17 @@ exports.roll_update = (req, res, next) => {
         })   
 }
 
-exports.roll_delete = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.remove({ _id: id})
+exports.front_delete = (req, res, next) => {
+    const id = req.params.frontId;
+    Front.remove({ _id: id})
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Roll deleted',
+                message: 'Front deleted',
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/roll',
-                    body: { icon: 'String', head: 'String', text: 'String' }
+                    url: 'http://localhost:3000/front-end',
+                    body: { icon: 'String', text: 'String' }
                 }
             });
         })

@@ -129,7 +129,7 @@ exports.extra_delete = (req, res, next) => {
                 request: {
                     type: 'POST',
                     url: 'http://localhost:3000/extra',
-                    body: { name: 'String', price: 'Number' }
+                    body: { number: 'Number', text: 'String' }
                 }
             });
         })

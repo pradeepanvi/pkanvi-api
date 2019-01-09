@@ -1,20 +1,19 @@
-const Roll = require('../models/roll');
+const Back = require('../models/back-end');
 
-exports.roll_get_all = (req, res, next) => {
-    Roll.find()
+exports.back_get_all = (req, res, next) => {
+    Back.find()
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                rolls: docs.map(doc => {
+                backs: docs.map(doc => {
                     return {
                         icon: doc.icon,
-                        head: doc.head,
                         text: doc.text,
                         _id: doc._id,
                         request: {
                             type: 'GET',
-                            url: 'http://localhost:3000/roll/' + doc._id
+                            url: 'http://localhost:3000/back-end/' + doc._id
                         }
                     }
                 })
@@ -30,27 +29,25 @@ exports.roll_get_all = (req, res, next) => {
         })
 }
 
-exports.roll_create = (req, res, next) => {
-    const roll = new Roll({
+exports.back_create = (req, res, next) => {
+    const back = new Back({
         icon: req.body.icon,
-        head: req.body.head,
         text: req.body.text
     })
 
-    roll
+    back
         .save()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Created Roll Seccessfully',
-                createdRoll: {
+                message: 'Created Back Seccessfully',
+                createdBack: {
                     icon: result.icon,
-                    head: result.head,
                     text: result.text,
                     _id: result._id,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll/' + result._id
+                        url: 'http://localhost:3000/back-end/' + result._id
                     }
                 }
             })
@@ -63,17 +60,17 @@ exports.roll_create = (req, res, next) => {
         })
 }
 
-exports.roll_get = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.findById(id)
+exports.back_get = (req, res, next) => {
+    const id = req.params.backId;
+    Back.findById(id)
         .then(doc => {
             console.log("From Database", doc);
             if(doc){
                 res.status(200).json({
-                    roll: doc,
+                    back: doc,
                     request: {
                         type: 'GET',
-                        url: 'http://localhost:3000/roll'
+                        url: 'http://localhost:3000/back-end'
                     }
                 })
             } else {
@@ -82,7 +79,7 @@ exports.roll_get = (req, res, next) => {
                 })
             }
             res.status(200).json({
-                roll: doc
+                back: doc
             })
         })
         .catch(err => {
@@ -93,13 +90,13 @@ exports.roll_get = (req, res, next) => {
         })
 }
 
-exports.roll_update = (req, res, next) => {
-    const id = req.params.rollId;
+exports.back_update = (req, res, next) => {
+    const id = req.params.backId;
     const updateOps = {};
     for(const ops of req.body){
         updateOps[ops.propName] = ops.value;
     }
-    Roll.update(
+    Back.update(
         {_id: id},
         {$set: updateOps}
     )
@@ -107,10 +104,10 @@ exports.roll_update = (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Roll updated',
+                message: 'Back updated',
                 request: {
                     type: 'GET',
-                    url: 'http://localhost:3000/roll' + id
+                    url: 'http://localhost:3000/back-end' + id
                 }
             });
         })
@@ -122,17 +119,17 @@ exports.roll_update = (req, res, next) => {
         })   
 }
 
-exports.roll_delete = (req, res, next) => {
-    const id = req.params.rollId;
-    Roll.remove({ _id: id})
+exports.back_delete = (req, res, next) => {
+    const id = req.params.backId;
+    Back.remove({ _id: id})
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Roll deleted',
+                message: 'Back deleted',
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/roll',
-                    body: { icon: 'String', head: 'String', text: 'String' }
+                    url: 'http://localhost:3000/back-end',
+                    body: { icon: 'String', text: 'String' }
                 }
             });
         })

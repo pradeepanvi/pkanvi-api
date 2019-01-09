@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 //const ProjectRoutes = require('./api/routes/project');
 const RollRoutes = require('./api/routes/roll');
 const ExtraRoutes = require('./api/routes/extra');
+const FrontRoutes = require('./api/routes/front-end');
+const BackRoutes = require('./api/routes/back-end');
 
 mongoose.connect('mongodb+srv://pkanvi:' + process.env.MONGO_ATLAS_PW + '@pkanvi-api-bhhxl.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
@@ -61,6 +63,8 @@ app.post('/uploads', upload.single('productImage'), function (req, res) {
 //app.use('/project', ProjectRoutes);
 app.use('/roll', RollRoutes);
 app.use('/extra', ExtraRoutes);
+app.use('/front-end', FrontRoutes);
+app.use('/back-end', BackRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
