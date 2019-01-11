@@ -16,14 +16,15 @@ mongoose.connect('mongodb+srv://pkanvi:' + process.env.MONGO_ATLAS_PW + '@pkanvi
 
 mongoose.Promise = global.Promise;
 
-const DIR = './uploads';
+const DIR = './uploads/';
  
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, DIR);
     },
     filename: (req, file, cb) => {
-      cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+      //cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+      cb(null, file.originalname);
     }
 });
 let upload = multer({storage: storage});
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/uploads', upload.single('productImage'), function (req, res) {
+app.post('/uploads', upload.any(), function (req, res) {
     if (!req.file) {
         console.log("No file received");
         return res.send({
