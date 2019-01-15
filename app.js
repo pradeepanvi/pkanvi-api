@@ -4,7 +4,7 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-//const ProjectRoutes = require('./api/routes/project');
+const ProjectRoutes = require('./api/routes/project');
 const RollRoutes = require('./api/routes/roll');
 const ExtraRoutes = require('./api/routes/extra');
 const FrontRoutes = require('./api/routes/front-end');
@@ -61,7 +61,7 @@ app.post('/uploads', upload.any(), function (req, res) {
 });
 
 // Routes which should handle requests
-//app.use('/project', ProjectRoutes);
+app.use('/project', ProjectRoutes);
 app.use('/roll', RollRoutes);
 app.use('/extra', ExtraRoutes);
 app.use('/front-end', FrontRoutes);

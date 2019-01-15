@@ -7,7 +7,7 @@ const projectSchema = mongoose.Schema({
     slide1Image: { type: String },
     slide2Image: { type: String },
     category: { type: String },
-    technology: { type: String },
+    technology: { type: Array },
     client: { type: String },
     detail: { type: String },
     rolls: { type: String },
